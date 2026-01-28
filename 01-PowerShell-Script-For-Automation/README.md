@@ -15,34 +15,6 @@ PowerShell scripts can be version‑controlled, reused, and integrated into auto
 
 Save as deploy-azure-vm.ps1 and run from PowerShell 7+).
 
-```bash
-az login
-az account set --subscription "<your-subscription-id-or-name>"
-```
-
-Variables
-```bash
-# Core variables
-RG="rg-uksouth-winvm-demo"
-LOCATION="uksouth"
-VNET_NAME="vnet-uksouth-demo"
-VNET_CIDR="10.10.0.0/16"
-SUBNET_NAME="snet-workloads"
-SUBNET_CIDR="10.10.1.0/24"
-NSG_NAME="nsg-workloads"
-PIP_NAME="pip-winvm-demo"
-NIC_NAME="nic-winvm-demo"
-VM_NAME="winvm-demo"
-VM_SIZE="Standard_B1s"
-ADMIN_USER="azureuser"
-```
-
-### Prompt for a password (recommended)
-
-```bash
-read -s -p "Enter a strong password for $ADMIN_USER: " ADMIN_PASS; echo
-```
-
 ### 1. Uses Azure CLI (az) under the hood 
 
 ```bash
