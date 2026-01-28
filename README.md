@@ -30,16 +30,16 @@ The size Standard_B1s is eligible under the Azure Free Account offer for compute
 #Prerequisites
 
 Azure CLI installed and logged in:
-(PowerShell 7+ (for the script portion), or Windows PowerShell 5.1 and Contributor rights to your target subscription.)
+(PowerShell 7+ (for the script portion), and Contributor rights to your target subscription.)
 
 ```bash
 az login
 az account set --subscription "<your-subscription-id-or-name>"
 ```
 
-CLI: Step-by-step Provisioning (Network + Windows VM) Replace values in angle brackets as needed.
+Variables
 ```bash
-# Required variables
+# Core variables
 RG="rg-uksouth-winvm-demo"
 LOCATION="uksouth"
 VNET_NAME="vnet-uksouth-demo"
@@ -50,216 +50,34 @@ NSG_NAME="nsg-workloads"
 PIP_NAME="pip-winvm-demo"
 NIC_NAME="nic-winvm-demo"
 VM_NAME="winvm-demo"
-VM_SIZE="Standard_B1s" # free-tier-eligible compute size
+VM_SIZE="Standard_B1s"
 ADMIN_USER="azureuser"
-# Generate a strong password or set your own
-ADMIN_PASS="$(python - << 'PY'
-import secrets, string
-alphabet = string.ascii_letters + string.digits + "!@#$%^&*()-_=+"
-print(''.join(secrets.choice(alphabet) for _ in range(24)))
-PY
-)"
+```
+
+### Prompt for a password (recommended)
+
+```bash
+read -s -p "Enter a strong password for $ADMIN_USER: " ADMIN_PASS; echo
+```
+
+### 1. Resource Group
+
+```bash
+az group create \
+  --name $RG \
+  --location $LOCATION
+```
+
+### 2. Virtual Network + Subnet
+
+```bash
+az network vnet create \
+  --resource-group $RG \
+  --name $VNET_NAME \
+  --address-prefixes $VNET_CIDR \
+  --subnet-name $SUBNET_NAME \
+  --subnet-prefixes $SUBNET_CIDR
 ``
 ```
 
-### cargo
 
-Install from crates.io using cargo:
-
-```bash
-cargo install supabase-plus
-```
-
-Alternatively you can find pre-built binaries for your platform on [GitHub](https://github.com/dsplce-co/supabase-plus/releases).
-
-After installation, the `sbp` command will be available in your terminal.
-
-### Homebrew
-
-Install from our tap:
-
-```
-brew install dsplce-co/tap/supabase-plus
-```
-
-This makes the `sbp` command available in your terminal.
-
-### `.deb` file
-
-You can find the latest `.deb` file on [GitHub Releases](https://github.com/dsplce-co/supabase-plus/releases/latest).
-
-### apt
-
-Coming soon
-
-### AUR repository
-
-Coming soon
-
-⸻
-
-## 🧪 Usage
-
-### Stop any running project
-
-If you ever worked on multiple "Supa-based" projects you probably encountered this scenario where:
-
-1. You wanted to `supabase start`
-2. Then got an error saying some Supabase's already running
-
-And then you had no clue which one; we've all been there, I'm not gonna even describe my ways of figuring this out, just run this, they're encapsulated in a single command:
-
-```bash
-sbp stop-any
-```
-
-But if you're really curious here you go, it:
-
-- Scans for running Supabase Docker containers
-- Identifies project IDs
-- Stops each detected project using the official Supabase CLI (in theory there might be only one
-  supabase project running but sometimes single containers from other projects haunt the docker
-  runtime if the project hasn't been stopped properly)
-
-![](./assets/stop-any-demo.gif)
-
-### Create storage buckets interactively
-
-You might also have had this situation where you got your buckets created, you were happy, and then after merging to prod and having (db-diff-generated) migrations run, you've realised (or your client has), your buckets were either your imagination or db diff just simply didn't reflect them
-
-Well, it didn't and it won't as they're stored as records in a table (`"storage"."buckets"`) and are not part of any schema
-
-```bash
-sbp create bucket
-```
-
-This command will:
-
-- Guide you through bucket configuration with an interactive prompt
-- Set bucket name/slug
-- Configure visibility (public/private)
-- Optionally set MIME type restrictions by file extension
-- Generate a timestamped migration file in `supabase/migrations/`
-- Optionally apply the migration immediately to your local database (recommended)
-
-![](./assets/create-bucket-demo.gif)
-
-### Manage realtime switches interactively
-
-Another entity which is db-diff-immune are realtime switches on tables, they're neither schema nor data, but are bound to a publication feature of Postgres, long story short, run:
-
-```bash
-sbp manage realtime
-```
-
-This command will:
-
-- Display all tables in the specified schema (defaults to `public`)
-- Show current realtime subscription status for each table
-- Allow you to interactively select/deselect tables for realtime
-- Generate appropriate SQL to add/remove tables from the `supabase_realtime` publication
-- Create a timestamped migration file in `supabase/migrations/`
-- Optionally apply the migration immediately to your local database (recommended)
-
-![](./assets/manage-rt-demo.gif)
-
-### Store RPC-s in repo
-
-Change my mind but chasing the latest version of an RPC in the depths of Postgres or the latest migration containing it (mild-panic) or copying it from the studio's RPC editor aren't things I like to do. Especially in order to edit it in an untitled file in my editor and then paste it back and execute in db to sync any change
-
-C'mon, I'm lazy I don't want to leave my editor
-
-Why not store them in repo to watch them and execute automatically on change?
-
-```bash
-sbp watch ./rpc
-```
-
-This command will:
-
-- Watch for changes to `.sql` files in the specified directory
-- Automatically execute modified SQL files as database queries
-- Useful for storing RPC functions in a repository and keeping them synced with your local database
-- Before pushing your changes you can just run the regular `supabase db diff -f <migration_name>`
-  to generate a migration that will reflect on remote environments
-
-You can also run all SQL files immediately when starting the watcher:
-
-```bash
-sbp watch ./rpc --immediate
-```
-
-The `--immediate` (or `-I`) flag will execute all existing SQL files in the directory initially on the command start.
-
-**Example file:**
-
-`rpc/hello_world.sql`:
-
-```sql
-drop function if exists public.hello_world;
-
-create function public.hello_world(name text)
- returns boolean
- language plpgsql
- security definer
-as $function$
-  declare
-    greeting text;
-  begin
-  end;
-$function$;
-```
-
-_Please note that there is a `drop` statement at the beginning of the file. This is necessary to ensure that the function is dropped before it is recreated. In the future we plan to add `--autodrop` flag to automatically generate and run drop statements before applying the file's SQL behind the scenes._
-
-![](./assets/watch-demo.gif)
-
-### Shell completions
-
-Generate shell completions for your preferred shell:
-
-```bash
-sbp completions bash
-
-# For zsh it tries to write a completion script to ~/.zsh/completion/_sbp path by default in future
-# there might be an option to automatically write the script for other shells too
-sbp completions zsh
-
-# If you want to get the completion script just printed you can pass `-n` flag
-sbp completions zsh -n
-
-sbp completions fish
-
-sbp completions powershell
-```
-
-### Self-update
-
-Keep your installation up to date:
-
-```bash
-sbp upgrade
-```
-
-⸻
-
-## 🛠️ Requirements
-
-- **docker socket**: Properly working `/var/run/docker.sock` on Unix-based systems and `\\.\pipe\docker_engine` on Windows
-- **npx**: For running `supabase` CLI commands when needed (in the future there will be an option of customising the source of this command), it usually comes with Node.js installation
-- **cargo**: For installation and self-updates
-
-⸻
-
-## 📁 Repo & Contributions
-
-🛠️ **Repo**: [https://github.com/dsplce-co/supabase-plus](https://github.com/dsplce-co/supabase-plus)<br>
-📦 **Crate**: [https://crates.io/crates/supabase-plus](https://crates.io/crates/supabase-plus)
-
-PRs welcome, feel free to contribute
-
-⸻
-
-## 📄 License
-
-MIT or Apache-2.0, at your option.
