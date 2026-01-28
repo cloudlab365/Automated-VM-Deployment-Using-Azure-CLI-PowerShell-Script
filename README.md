@@ -80,4 +80,94 @@ az network vnet create \
 ``
 ```
 
+### 3. NSG and RDP rule (restrict to your IP)
+
+```bash
+MYIP=$(curl -s https://ifconfig.me || curl -s https://api.ipify.org)
+az network nsg create \
+  --resource-group $RG \
+  --name $NSG_NAME
+
+az network nsg rule create \
+  --resource-group $RG \
+  --nsg-name $NSG_NAME \
+  --name "Allow-RDP-From-MyIP" \
+  --priority 1000 \
+  --access Allow \
+  --direction Inbound \
+  --protocol Tcp \
+  --source-address-prefixes ${MYIP}/32 \
+  --source-port-ranges "*" \
+  --destination-address-prefixes "*" \
+  --destination-port-ranges 3389
+```
+
+### 4. Associate NSG to Subnet
+
+```bash
+az network vnet subnet update \
+  --resource-group $RG \
+  --vnet-name $VNET_NAME \
+  --name $SUBNET_NAME \
+  --network-security-group $NSG_NAME
+```
+
+### 5. Public IP (Standard, Static)
+
+```bash
+az network public-ip create \
+  --resource-group $RG \
+  --name $PIP_NAME \
+  --location $LOCATION \
+  --sku Standard \
+  --allocation-method Static
+``
+```
+
+### 6. NIC
+
+```bash
+SUBNET_ID=$(az network vnet subnet show \
+  --resource-group $RG \
+  --vnet-name $VNET_NAME \
+  --name $SUBNET_NAME \
+  --query id -o tsv)
+
+PIP_ID=$(az network public-ip show \
+  --resource-group $RG \
+  --name $PIP_NAME \
+  --query id -o tsv)
+
+az network nic create \
+  --resource-group $RG \
+  --name $NIC_NAME \
+  --subnet $SUBNET_ID \
+  --public-ip-address $PIP_ID
+``
+```
+
+### 7. Windows VM (Windows Server 2022)
+
+```bash
+az vm create \
+  --resource-group $RG \
+  --name $VM_NAME \
+  --location $LOCATION \
+  --nics $NIC_NAME \
+  --image "MicrosoftWindowsServer:WindowsServer:2022-datacenter:latest" \
+  --size $VM_SIZE \
+  --admin-username $ADMIN_USER \
+  --admin-password "$ADMIN_PASS" \
+  --authentication-type password \
+  --os-disk-name "${VM_NAME}-osdisk" \
+  --tags "env=demo" "owner=$USER"
+```
+
+### 8. Get Public IP and RDP
+
+```bash
+az vm list-ip-addresses -g $RG -n $VM_NAME -o table
+# Connect with: mstsc /v:<public-ip>
+```
+
 
