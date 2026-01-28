@@ -1,7 +1,6 @@
 # Automated VM Deployment Using Azure CLI + Bash/PowerShell Script
 
-In this project, I design and implement a complete Azure environment for a global medical research company migrating from on-premises infrastructure to Microsoft Azure.  
-My goal is to demonstrate how I approach real-world Azure architecture — covering planning, cost optimization, networking, identity governance, data platform integration, automation, and monitoring.
+Automating VM deployments with Azure CLI and Bash/PowerShell brings consistency, speed, and reliability to cloud provisioning. Instead of manually creating VMs through the Azure Portal—an error‑prone and time‑consuming process—scripts allow you to deploy fully configured environments in seconds. This approach ensures every VM is built the same way, supports repeatable infrastructure for dev/test/production, and enables version control through GitHub. Automated scripts are also ideal for CI/CD pipelines, disaster recovery scenarios, and large-scale infrastructure rollouts, making your Azure environment more predictable, secure, and maintainable.
 
 Each stage includes detailed documentation, example scripts, and diagrams to make it easy to understand or reproduce in your own Azure subscription.
 
@@ -9,20 +8,16 @@ Each stage includes detailed documentation, example scripts, and diagrams to mak
 
 ## What This Project Covers
 
-- **Virtual Machines** – Migration of on-premises workloads into Azure VMs  
-- **Networking** – Custom VNets, subnets, and Network Security Groups (NSGs)  
-- **Identity & Governance** – RBAC, Azure Policy, tagging, and compliance  
-- **Cost Optimization** – VM right-sizing, auto-shutdown, budgets, and alerts  
-- **Data Platform** – SQL Server setup, backups, and Docker containers  
-- **Automation** – PowerShell, Bash, Azure CLI, Bicep, and Python scripting  
-- **Monitoring & Security** – Azure Monitor, Log Analytics, and Defender for Cloud  
+- **Virtual Machines** – Automated creation of Azure Virtual Machines using Azure CLI 
+- **Networking** – Configuration of networking components (VNet, subnet, NSG rules, public/private IPs) 
+- **Identity & Governance** – Tagging, naming standards, and resource‑group structure for clean Azure governance  
+- **Automation** – PowerShell scripting  
 
 ---
 
 ## Project Goal
 
-My objective is to demonstrate how I plan, build, and document an end-to-end **Azure migration and architecture** that is secure, automated, and cost-efficient.  
-This project reflects my approach as an **Azure Solutions Architect**, focusing on design principles, governance, and operational excellence.
+The goal of this project is to provide a simple, repeatable, and fully automated way to deploy Azure Virtual Machines using Azure CLI with Bash or PowerShell scripting. By standardizing VM creation through automation
 
 ---
 
