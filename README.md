@@ -4,6 +4,8 @@ Automating VM deployments with Azure CLI and Bash/PowerShell brings consistency,
 
 Each stage includes detailed documentation, example scripts, and diagrams to make it easy to understand or reproduce in your own Azure subscription.
 
+For the full PowerShell script - https://github.com/cloudlab365/Automated-VM-Deployment-Using-Azure-CLI-PowerShell-Script/tree/main/01-PowerShell-Script-For-Automation
+
 ---
 
 ## What This Project Covers
