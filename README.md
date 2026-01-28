@@ -4,6 +4,9 @@ Automating VM deployments with Azure CLI and Bash/PowerShell brings consistency,
 
 Each stage includes detailed documentation, example scripts, and diagrams to make it easy to understand or reproduce in your own Azure subscription.
 
+
+<img width="789" height="724" alt="Screenshot 2026-01-20 155828" src="https://github.com/user-attachments/assets/9f23c067-0b01-4fa4-a05d-af9a7e84d3a5" />
+
 ---
 
 ## What This Project Covers
