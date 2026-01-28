@@ -17,77 +17,49 @@ Each stage includes detailed documentation, example scripts, and diagrams to mak
 
 ## Project Goal
 
-The goal of this project is to provide a simple, repeatable, and fully automated way to deploy Azure Virtual Machines using Azure CLI with Bash or PowerShell scripting. By standardizing VM creation through automation
+The goal of this project is to provide a simple, repeatable, and fully automated way to deploy Azure Virtual Machines using Azure CLI with Bash or PowerShell scripting. By standardizing VM creation through automation.
+The size Standard_B1s is eligible under the Azure Free Account offer for compute (750 hrs/month), but Windows Server licensing may still incur charges. Linux on B1s is typically the truly free option. Double‑check your subscription benefits and estimated cost before deploying.
 
 ---
 
-> We're dsplce.co, check out our work on our website: [dsplce.co](https://dsplce.co) 🖤
+> gif goes here
 
-# supabase-plus
-
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![crates.io Size](https://img.shields.io/crates/d/supabase-plus?style=for-the-badge&color=%23FF0346)](https://crates.io/crates/supabase-plus)
-[![crates.io Size](https://img.shields.io/crates/size/supabase-plus?style=for-the-badge)](https://crates.io/crates/supabase-plus)
-[![License](https://img.shields.io/crates/l/supabase-plus.svg?style=for-the-badge)](https://crates.io/crates/supabase-plus)
-[![crates.io](https://img.shields.io/crates/v/supabase-plus?style=for-the-badge&color=%230F80C1)](https://crates.io/crates/supabase-plus)
-
-⚡ Extra tools for managing Supabase projects — going beyond the regular Supabase CLI.
-
-`supabase-plus` (`sbp`) is a batteries-included command-line utility that extends the official Supabase CLI with additional project management capabilities
-
-_Disclaimer: this project has no affiliation with the official Supabase project or trademark._
-
-![Demo](./assets/overview-demo.gif)
-
-## 🖤 Features
-
-- `sbp stop-any` Ever been working on multiple projects? No clue which to stop to start the current? Here's the picklock
-- `sbp create bucket` Had buckets locally once, never found them in prod at the end? Here's the command you "forgot" to run
-- `sbp watch ./rpc -I` Stop fighting the teeny-tiny studio editor and store your rpcs in the repo like a human
-
-And others like:
-
-- `sbp manage realtime`
-- `sbp manage migrations`
-
----
-
-## Table of Contents
-
-- [🖤 Features](#-features)
-- [📦 Installation](#-installation)
-  - [nix](#nix)
-  - [cargo](#cargo)
-  - [Homebrew](#homebrew)
-  - [.deb file](#deb-file)
-  - [apt](#apt)
-  - [AUR repository](#aur-repository)
-- [🧪 Usage](#-usage)
-  - [Stop any running project](#stop-any-running-project)
-  - [Create storage buckets interactively](#create-storage-buckets-interactively)
-  - [Manage realtime switches interactively](#manage-realtime-switches-interactively)
-  - [Store RPC-s in repo](#store-rpc-s-in-repo)
-  - [Shell completions](#shell-completions)
-  - [Self-update](#self-update)
-- [🛠️ Requirements](#%EF%B8%8F-requirements)
-- [📁 Repo & Contributions](#-repo--contributions)
-- [📄 License](#-license)
-
-⸻
 
 ## 📦 Installation
 
-#nix
+#Prerequisites
 
-Install to your profile with:
+Azure CLI installed and logged in:
+(PowerShell 7+ (for the script portion), or Windows PowerShell 5.1 and Contributor rights to your target subscription.)
 
 ```bash
-nix profile add github:dsplce-co/supabase-plus
+az login
+az account set --subscription "<your-subscription-id-or-name>"
 ```
 
-or just run with
+CLI: Step-by-step Provisioning (Network + Windows VM) Replace values in angle brackets as needed.
 ```bash
-nix run github:dsplce-co/supabase-plus
+# Required variables
+RG="rg-uksouth-winvm-demo"
+LOCATION="uksouth"
+VNET_NAME="vnet-uksouth-demo"
+VNET_CIDR="10.10.0.0/16"
+SUBNET_NAME="snet-workloads"
+SUBNET_CIDR="10.10.1.0/24"
+NSG_NAME="nsg-workloads"
+PIP_NAME="pip-winvm-demo"
+NIC_NAME="nic-winvm-demo"
+VM_NAME="winvm-demo"
+VM_SIZE="Standard_B1s" # free-tier-eligible compute size
+ADMIN_USER="azureuser"
+# Generate a strong password or set your own
+ADMIN_PASS="$(python - << 'PY'
+import secrets, string
+alphabet = string.ascii_letters + string.digits + "!@#$%^&*()-_=+"
+print(''.join(secrets.choice(alphabet) for _ in range(24)))
+PY
+)"
+``
 ```
 
 ### cargo
