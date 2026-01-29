@@ -6,7 +6,7 @@ PowerShell scripts can be version‑controlled, reused, and integrated into auto
 
 
 
-> gif goes here
+> 
 
 
 ## 📦 Installation
