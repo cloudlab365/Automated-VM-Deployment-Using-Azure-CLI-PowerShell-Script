@@ -24,7 +24,7 @@ The size Standard_B1s is eligible under the Azure Free Account offer for compute
 
 ---
 
-> gif goes here
+>
 
 
 ## 📦 Installation
